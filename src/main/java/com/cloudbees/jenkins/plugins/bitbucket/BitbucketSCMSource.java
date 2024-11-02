@@ -88,7 +88,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.authentication.tokens.api.AuthenticationTokens;
 import jenkins.model.Jenkins;
-import jenkins.plugins.git.AbstractGitSCMSource.SCMRevisionImpl;
 import jenkins.plugins.git.traits.GitBrowserSCMSourceTrait;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMHeadCategory;
@@ -999,44 +998,14 @@ public class BitbucketSCMSource extends SCMSource {
 
     @Override
     public SCM build(SCMHead head, SCMRevision revision) {
-        BitbucketRepositoryType type;
-        if (head instanceof PullRequestSCMHead) {
-            type = ((PullRequestSCMHead) head).getRepositoryType();
-        } else if (head instanceof BranchSCMHead) {
-            type = ((BranchSCMHead) head).getRepositoryType();
-        } else if (head instanceof BitbucketTagSCMHead) {
-            type = ((BitbucketTagSCMHead) head).getRepositoryType();
-        } else {
-            throw new IllegalArgumentException("Either PullRequestSCMHead, BitbucketTagSCMHead or BranchSCMHead required as parameter");
-        }
-        if (type == null) {
-            if (revision instanceof SCMRevisionImpl) {
-                type = BitbucketRepositoryType.GIT;
-            } else {
-                try {
-                    type = getRepositoryType();
-                } catch (IOException | InterruptedException e) {
-                    type = BitbucketRepositoryType.GIT;
-                    LOGGER.log(Level.SEVERE,
-                            "Could not determine repository type of " + getRepoOwner() + "/" + getRepository()
-                                    + " on " + getServerUrl() + " for " + getOwner() + " assuming " + type, e);
-                }
-            }
-        }
-        assert type != null;
         initCloneLinks();
 
-        switch (type) {
-            case GIT:
-            default:
-                BitbucketAuthenticator authenticator = authenticator();
-                return new BitbucketGitSCMBuilder(this, head, revision, null)
-                        .withExtension(authenticator == null ? null : new GitClientAuthenticatorExtension(authenticator.getCredentialsForScm()))
-                        .withCloneLinks(primaryCloneLinks, mirrorCloneLinks)
-                        .withTraits(traits)
-                        .build();
-
-        }
+        BitbucketAuthenticator authenticator = authenticator();
+        return new BitbucketGitSCMBuilder(this, head, revision, null)
+                .withExtension(authenticator == null ? null : new GitClientAuthenticatorExtension(authenticator.getCredentialsForScm()))
+                .withCloneLinks(primaryCloneLinks, mirrorCloneLinks)
+                .withTraits(traits)
+                .build();
     }
 
     private void setPrimaryCloneLinks(List<BitbucketHref> links) {

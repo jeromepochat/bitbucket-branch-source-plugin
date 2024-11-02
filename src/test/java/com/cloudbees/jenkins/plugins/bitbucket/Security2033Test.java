@@ -11,7 +11,6 @@ import hudson.security.ACL;
 import hudson.security.ACLContext;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import jenkins.model.Jenkins;
 import org.hamcrest.CoreMatchers;
