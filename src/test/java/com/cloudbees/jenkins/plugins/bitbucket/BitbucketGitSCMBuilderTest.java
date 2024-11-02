@@ -56,7 +56,7 @@ public class BitbucketGitSCMBuilderTest {
     private WorkflowMultiBranchProject owner;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws Exception {
         owner = j.createProject(WorkflowMultiBranchProject.class);
         source = new BitbucketSCMSource( "tester", "test-repo");
         owner.setSourcesList(Collections.singletonList(new BranchSource(source)));

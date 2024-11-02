@@ -36,6 +36,7 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.TaskListener;
+import hudson.model.Descriptor.FormException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -183,7 +184,11 @@ public class BitbucketBuildStatusNotificationsTest {
 
         @Override
         protected FlowDefinition createDefinition() {
-            return new CpsFlowDefinition(dsl, true);
+            try {
+                return new CpsFlowDefinition(dsl, true);
+            } catch (FormException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override

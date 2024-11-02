@@ -4,6 +4,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketAuthenticator;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+import hudson.model.Descriptor.FormException;
 import hudson.util.Secret;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHeaders;
@@ -38,7 +39,11 @@ public class BitbucketAccessTokenAuthenticator extends BitbucketAuthenticator {
 
     @Override
     public StandardUsernameCredentials getCredentialsForScm() {
-        return new UsernamePasswordCredentialsImpl(
-                CredentialsScope.GLOBAL, null, null, StringUtils.EMPTY, token.getPlainText());
+        try {
+            return new UsernamePasswordCredentialsImpl(
+                    CredentialsScope.GLOBAL, null, null, StringUtils.EMPTY, token.getPlainText());
+        } catch (FormException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -30,6 +30,7 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+import hudson.model.Descriptor.FormException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpHost;
@@ -80,7 +81,11 @@ public class BitbucketUsernamePasswordAuthenticator extends BitbucketAuthenticat
 
     @Override
     public StandardUsernameCredentials getCredentialsForScm() {
-        return new UsernamePasswordCredentialsImpl(
-                CredentialsScope.GLOBAL, null, null, httpCredentials.getUserName(), httpCredentials.getPassword());
+        try {
+            return new UsernamePasswordCredentialsImpl(
+                    CredentialsScope.GLOBAL, null, null, httpCredentials.getUserName(), httpCredentials.getPassword());
+        } catch (FormException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

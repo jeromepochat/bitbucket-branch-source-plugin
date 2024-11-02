@@ -79,7 +79,7 @@ public class AbstractBitbucketEndpointTest {
     }
 
     @Test
-    public void given__mange__when__systemCredentials__then__credentialsFound() {
+    public void given__mange__when__systemCredentials__then__credentialsFound() throws Exception {
         SystemCredentialsProvider.getInstance().setDomainCredentialsMap(Collections.singletonMap(Domain.global(),
                 Collections.<Credentials>singletonList(new UsernamePasswordCredentialsImpl(
                         CredentialsScope.SYSTEM, "dummy", "dummy", "user", "pass"))));
@@ -87,7 +87,7 @@ public class AbstractBitbucketEndpointTest {
     }
 
     @Test
-    public void given__mange__when__globalCredentials__then__credentialsFound() {
+    public void given__mange__when__globalCredentials__then__credentialsFound() throws Exception {
         SystemCredentialsProvider.getInstance().setDomainCredentialsMap(Collections.singletonMap(Domain.global(),
                 Collections.<Credentials>singletonList(new UsernamePasswordCredentialsImpl(
                         CredentialsScope.GLOBAL, "dummy", "dummy", "user", "pass"))));

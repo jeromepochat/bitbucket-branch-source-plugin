@@ -32,6 +32,7 @@ import com.cloudbees.plugins.credentials.domains.HostnameSpecification;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.damnhandy.uri.template.UriTemplate;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.model.Descriptor.FormException;
 import hudson.util.ListBoxModel;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,7 @@ public class AbstractBitbucketEndpointDescriptorTest {
     }
 
     @Test
-    public void given__cloudCredentials__when__listingForServer__then__noCredentials() {
+    public void given__cloudCredentials__when__listingForServer__then__noCredentials() throws Exception {
         SystemCredentialsProvider.getInstance().setDomainCredentialsMap(Collections.singletonMap(
                 new Domain("cloud", "bb cloud",
                         Collections.<DomainSpecification>singletonList(new HostnameSpecification("bitbucket.org", ""))),
@@ -68,7 +69,7 @@ public class AbstractBitbucketEndpointDescriptorTest {
     }
 
     @Test
-    public void given__cloudCredentials__when__listingForCloud__then__credentials() {
+    public void given__cloudCredentials__when__listingForCloud__then__credentials() throws Exception {
         SystemCredentialsProvider.getInstance().setDomainCredentialsMap(Collections.singletonMap(
                 new Domain("cloud", "bb cloud",
                         Collections.<DomainSpecification>singletonList(new HostnameSpecification("bitbucket.org", ""))),

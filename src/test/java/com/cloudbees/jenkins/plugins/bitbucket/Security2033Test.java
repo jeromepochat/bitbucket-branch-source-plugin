@@ -163,7 +163,7 @@ public class Security2033Test {
         assertThat(page.getWebResponse().getContentAsString(), containsString("Stapler processed this HTTP request as follows, but couldn't find the resource to consume the request"));
     }
 
-    private void initCredentials() throws IOException {
+    private void initCredentials() throws Exception {
         StandardUsernamePasswordCredentials key = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "id", "desc", "username", "pass");
         SystemCredentialsProvider.getInstance().getCredentials().add(key);
 
