@@ -6,16 +6,15 @@ import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.httpclient.HttpClient;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.httpclient.apache.ApacheHttpClientConfig;
-import com.github.scribejava.httpclient.apache.ApacheProvider;
 import hudson.model.Descriptor.FormException;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import jenkins.authentication.tokens.api.AuthenticationTokenException;
+import jenkins.util.SetContextClassLoader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpRequest;
 
@@ -32,14 +31,11 @@ public class BitbucketOAuthAuthenticator extends BitbucketAuthenticator {
     public BitbucketOAuthAuthenticator(StandardUsernamePasswordCredentials credentials) throws AuthenticationTokenException {
         super(credentials);
 
-        HttpClient httpClient = new ApacheProvider().createClient(ApacheHttpClientConfig.defaultConfig());
-        OAuth20Service service = new ServiceBuilder(credentials.getUsername())
-            .apiSecret(credentials.getPassword().getPlainText())
-            .httpClient(httpClient)
-         // .httpClientConfig(ApacheHttpClientConfig.defaultConfig()) the ServiceLoader does not work well with Jenkins plugin classloader
-            .build(BitbucketOAuth.instance());
-
-        try {
+        try (SetContextClassLoader cl = new SetContextClassLoader(this.getClass())) {
+            OAuth20Service service = new ServiceBuilder(credentials.getUsername())
+                .apiSecret(credentials.getPassword().getPlainText())
+                .httpClientConfig(ApacheHttpClientConfig.defaultConfig())
+                .build(BitbucketOAuth.instance());
             token = service.getAccessTokenClientCredentialsGrant();
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new AuthenticationTokenException(e);
