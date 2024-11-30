@@ -140,7 +140,7 @@ public class BitbucketBuildStatusNotifications {
             state = BitbucketBuildStatus.Status.FAILED;
         } else if (Result.NOT_BUILT.equals(result)) {
             statusDescription = StringUtils.defaultIfBlank(buildDescription, "This commit was not built (probably the build was skipped)");
-            if (context.disableNotificationForNotBuildJobs()) {
+            if (context.sendStopNotificationForNotBuildJobs()) {
                 // Bitbucket Cloud and Server support different build states.
                 state = (bitbucket instanceof BitbucketCloudApiClient) ? BitbucketBuildStatus.Status.STOPPED : BitbucketBuildStatus.Status.CANCELLED;
             } else {
@@ -180,6 +180,7 @@ public class BitbucketBuildStatusNotifications {
         BitbucketSCMSourceContext sourceContext = new BitbucketSCMSourceContext(null,
             SCMHeadObserver.none()).withTraits(source.getTraits());
         if (sourceContext.notificationsDisabled()) {
+            listener.getLogger().println("[Bitbucket] Notification is disabled by configuration");
             return;
         }
         SCMRevision rev = SCMRevisionAction.getRevision(source, build);

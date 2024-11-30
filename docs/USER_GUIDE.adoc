@@ -174,6 +174,51 @@ For branches and tags, the mirror sync event is used. Thus, at cloning time, the
 
 image::images/screenshot-13.png[scaledwidth=90%]
 
+[id=bitbucket-build-status]
+== Bitbucket build status
+
+When a new job build starts, the plugin send notifications to Bitbucket about the build status. An "In progress" notification is sent after complete the git checkout, another notification is sent at the end of the build, the sent value depends by the build result and the configuration given by the trait.
+
+image::images/screenshot-15.png[scaledwidth=90%]
+
+Follow a summary of all possible values:
+
+[cols=3*,options=header]
+|===
+| Jenkins
+| Bitbucket Cloud
+| Bitbucket Data Center and Server
+
+| https://javadoc.jenkins.io/hudson/model/Result.html#SUCCESS[SUCCESS]
+| SUCCESSFUL
+| SUCCESSFUL
+
+| https://javadoc.jenkins.io/hudson/model/Result.html#UNSTABLE[UNSTABLE]
+| configurable SUCCESSFUL or FAILED
+| configurable SUCCESSFUL or FAILED
+
+| https://javadoc.jenkins.io/hudson/model/Result.html#FAILURE[FAILURE]
+| FAILED
+| FAILED
+
+| https://javadoc.jenkins.io/hudson/model/Result.html#NOT_BUILT[NOT_BUILT]
+| configurable FAILED or STOPPED
+| configurable FAILED or CANCELLED
+
+| https://javadoc.jenkins.io/hudson/model/Result.html#ABORTED[ABORTED]
+| configurable FAILED or STOPPED
+| configurable FAILED or CANCELLED
+
+| null
+| INPROGRESS
+| INPROGRESS
+|===
+
+The STOPPED status prevents merge checks on Cloud, CANCELLED status should prevents merge checks on Data Center
+
+If this does not meet you need you can disable any notification to Bitbucket using the https://github.com/jenkinsci/skip-notifications-trait-plugin/[skip-notifications-trait-plugin] and provide notification about the build status yourself. This can be achieved via a curl shell command or by using build steps provided by the https://github.com/jenkinsci/bitbucket-build-status-notifier-plugin[bitbucket-build-status-notifier-plugin].
+
+
 [id=bitbucket-misc-config]
 == Miscellaneous configuration
 
