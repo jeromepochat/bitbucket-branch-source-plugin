@@ -29,6 +29,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketBuildStatus;
 import com.cloudbees.jenkins.plugins.bitbucket.client.BitbucketCloudApiClient;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Result;
@@ -44,6 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import jenkins.model.JenkinsLocationConfiguration;
 import jenkins.plugins.git.AbstractGitSCMSource;
+import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMHeadObserver;
 import jenkins.scm.api.SCMRevision;
 import jenkins.scm.api.SCMRevisionAction;
@@ -96,9 +98,12 @@ public class BitbucketBuildStatusNotifications {
         }
     }
 
-    private static void createStatus(@NonNull Run<?, ?> build, @NonNull TaskListener listener,
-        @NonNull BitbucketApi bitbucket, @NonNull String key, @NonNull String hash)
-            throws IOException, InterruptedException {
+    private static void createStatus(@NonNull Run<?, ?> build,
+                                     @NonNull TaskListener listener,
+                                     @NonNull BitbucketApi bitbucket,
+                                     @NonNull String key,
+                                     @NonNull String hash,
+                                     @Nullable String refName) throws IOException, InterruptedException {
 
         final SCMSource source = SCMSource.SourceByItem.findSource(build.getParent());
         if (!(source instanceof BitbucketSCMSource)) {
@@ -161,7 +166,11 @@ public class BitbucketBuildStatusNotifications {
 
         if (state != null) {
             BitbucketChangesetCommentNotifier notifier = new BitbucketChangesetCommentNotifier(bitbucket);
-            notifier.buildStatus(new BitbucketBuildStatus(hash, statusDescription, state, url, key, name));
+            BitbucketBuildStatus buildStatus = new BitbucketBuildStatus(hash, statusDescription, state, url, key, name, refName);
+            buildStatus.setBuildDuration(build.getDuration());
+            buildStatus.setBuildNumber(build.getNumber());
+            // TODO testResults should be provided by an extension point that integrates JUnit or anything else plugin
+            notifier.buildStatus(buildStatus);
             if (result != null) {
                 listener.getLogger().println("[Bitbucket] Build result notified");
             }
@@ -196,18 +205,36 @@ public class BitbucketBuildStatusNotifications {
             .anyMatch(ExcludeOriginPRBranchesSCMHeadFilter.class::isInstance);
 
         String key;
+        String refName;
         BitbucketApi bitbucket;
         if (rev instanceof PullRequestSCMRevision) {
             listener.getLogger().println("[Bitbucket] Notifying pull request build result");
             PullRequestSCMHead head = (PullRequestSCMHead) rev.getHead();
             key = getBuildKey(build, head.getOriginName(), shareBuildKeyBetweenBranchAndPR);
+            /*
+             * in case of pull request it's not clear at all how to value refname. The
+             * bitbucket documentation does not help. Using values like
+             * - refs/heads/PR-748;
+             * - refs/pull-requests/748,
+             * - refs/pull-requests/feature/test;
+             * causes the build status disappear from the web page.
+             * The only working value is null. If commit is used for two different
+             * pull requests than you will get status doubled in both PRs
+             */
+            refName = null; // "refs/pull-requests/" + head.getBranchName();
             bitbucket = source.buildBitbucketClient(head);
         } else {
             listener.getLogger().println("[Bitbucket] Notifying commit build result");
-            key = getBuildKey(build, rev.getHead().getName(), shareBuildKeyBetweenBranchAndPR);
+            SCMHead head = rev.getHead();
+            key = getBuildKey(build, head.getName(), shareBuildKeyBetweenBranchAndPR);
+            if (rev instanceof BitbucketTagSCMRevision || head instanceof BitbucketTagSCMHead) {
+                refName = "refs/tags/" + head.getName();
+            } else {
+                refName = "refs/heads/" + head.getName();
+            }
             bitbucket = source.buildBitbucketClient();
         }
-        createStatus(build, listener, bitbucket, key, hash);
+        createStatus(build, listener, bitbucket, key, hash, refName);
     }
 
     @CheckForNull
