@@ -67,7 +67,6 @@ import hudson.model.Item;
 import hudson.model.Items;
 import hudson.model.TaskListener;
 import hudson.plugins.git.GitSCM;
-import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.scm.SCM;
 import hudson.security.AccessControlled;
 import hudson.util.FormFillFailure;
@@ -1002,33 +1001,12 @@ public class BitbucketSCMSource extends SCMSource {
     public SCM build(SCMHead head, SCMRevision revision) {
         initCloneLinks();
 
-        String scmCredentialsId = credentialsId;
+        boolean sshAuth = traits.stream()
+            .anyMatch(SSHCheckoutTrait.class::isInstance);
 
         BitbucketAuthenticator authenticator = authenticator();
-        GitSCMExtension scmExtension;
-        if (authenticator != null) {
-            // workaround to force git-plugin to use the configured username/password credentialsId as is
-            // remove this workaround as https://github.com/jenkinsci/bitbucket-branch-source-plugin/pull/867 will be merged
-            boolean sshAuth = traits.stream()
-                    .anyMatch(SSHCheckoutTrait.class::isInstance);
-            if (sshAuth) {
-                // trait will do the magic
-                scmCredentialsId = null;
-                scmExtension = new GitClientAuthenticatorExtension(null);
-            } else if (authenticator instanceof BitbucketUsernamePasswordAuthenticator) {
-                scmExtension = new GitClientAuthenticatorExtension(null);
-            } else {
-                // extension overrides the configured credentialsId with a custom StandardUsernameCredentials provided by the Authenticator
-                scmExtension = new GitClientAuthenticatorExtension(authenticator.getCredentialsForSCM());
-                // will be overridden by git extension
-                scmCredentialsId = null;
-            }
-        } else {
-            scmExtension = new GitClientAuthenticatorExtension(null);
-        }
-
-        return new BitbucketGitSCMBuilder(this, head, revision, scmCredentialsId)
-                .withExtension(scmExtension)
+        return new BitbucketGitSCMBuilder(this, head, revision, credentialsId)
+                .withExtension(new GitClientAuthenticatorExtension(authenticator == null || sshAuth ? null : authenticator.getCredentialsForSCM()))
                 .withCloneLinks(primaryCloneLinks, mirrorCloneLinks)
                 .withTraits(traits)
                 .build();
