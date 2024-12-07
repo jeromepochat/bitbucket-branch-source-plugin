@@ -72,7 +72,7 @@ public class BitbucketClientCertificateAuthenticator implements BitbucketAuthent
 
     private SSLContext buildSSLContext() throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException {
         SSLContextBuilder contextBuilder = SSLContexts.custom();
-        contextBuilder.loadKeyMaterial(keyStore, password.getPlainText().toCharArray());
+        contextBuilder.loadKeyMaterial(keyStore, Secret.toString(password).toCharArray());
         return contextBuilder.build();
     }
 

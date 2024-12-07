@@ -27,6 +27,7 @@ package com.cloudbees.jenkins.plugins.bitbucket.credentials;
 
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketAuthenticator;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import hudson.util.Secret;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpHost;
@@ -55,8 +56,8 @@ public class BitbucketUsernamePasswordAuthenticator implements BitbucketAuthenti
      */
     public BitbucketUsernamePasswordAuthenticator(StandardUsernamePasswordCredentials credentials) {
         credentialsId = credentials.getId();
-        httpCredentials = new UsernamePasswordCredentials(credentials.getUsername(),
-                credentials.getPassword().getPlainText());
+        String password = Secret.toString(credentials.getPassword());
+        httpCredentials = new UsernamePasswordCredentials(credentials.getUsername(), password);
     }
 
     /**

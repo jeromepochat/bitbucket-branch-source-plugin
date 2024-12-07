@@ -58,7 +58,7 @@ public class BitbucketAccessTokenAuthenticator implements BitbucketAuthenticator
      * @param request to configure with the access token
      */
     public void configureRequest(HttpRequest request) {
-        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.getPlainText());
+        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + Secret.toString(token));
     }
 
     /**
@@ -73,7 +73,7 @@ public class BitbucketAccessTokenAuthenticator implements BitbucketAuthenticator
     @Override
     public StandardUsernameCredentials getCredentialsForSCM() {
         try {
-            return new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, getId(), null, "x-token-auth", token.getPlainText());
+            return new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, getId(), null, "x-token-auth", Secret.toString(token));
         } catch (FormException e) {
             throw new RuntimeException(e);
         }
