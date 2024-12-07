@@ -126,10 +126,10 @@ image::images/screenshot-7.png[scaledwidth=90%]
 The plugin can make use of a repository, project or workspace access token (Bitbucket Cloud only).
 
 First, create a new _access token_ in Bitbucket as instructed in one of the following links:
-.Bulleted
-. https://support.atlassian.com/bitbucket-cloud/docs/create-a-repository-access-token/[Repository Access Token | Atlassian Documentation];
-. https://support.atlassian.com/bitbucket-cloud/docs/create-a-project-access-token/[Project Access Token | Atlassian Documentation];
-. https://support.atlassian.com/bitbucket-cloud/docs/create-a-workspace-access-token/[Workspace Access Token | Atlassian Documentation];
+
+* https://support.atlassian.com/bitbucket-cloud/docs/create-a-repository-access-token/[Repository Access Token | Atlassian Documentation];
+* https://support.atlassian.com/bitbucket-cloud/docs/create-a-project-access-token/[Project Access Token | Atlassian Documentation];
+* https://support.atlassian.com/bitbucket-cloud/docs/create-a-workspace-access-token/[Workspace Access Token | Atlassian Documentation];
 
 At least allow _read_ access for repositories. If you want the plugin to install the webhooks, allow _Read and write_ access for Webhooks.
 
