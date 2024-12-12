@@ -72,14 +72,16 @@ multibranch:
             credentialsId: 'bitbucket-ssh-credentials'
 ```
 
-### Release notes (for mantainers)
+### Release notes (for maintainers)
 
 To perform a release of this plugin the minimum requirements are:
  * Maven 3.9.9
  * JDK 17
  * git 2.39.x
 
-From a shell or Windows terminal run `mvn -B -ntp release:prepare release:perform "-Pquick-build" "-P-block-MRP"`
+In a shell or Windows terminal run
+
+`mvn -B -ntp release:prepare release:perform "-Pquick-build" "-P-block-MRP"`
 
 ## How-to run and test with Bitbucket Server locally
 
