@@ -28,9 +28,9 @@ import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketHref;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketRepository;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketRepositoryProtocol;
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.AbstractBitbucketEndpoint;
-import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketCloudEndpoint;
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketEndpointConfiguration;
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketServerEndpoint;
+import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketApiUtils;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketCredentials;
 import com.cloudbees.jenkins.plugins.sshcredentials.SSHUserPrivateKey;
 import com.cloudbees.plugins.credentials.Credentials;
@@ -108,11 +108,11 @@ public class BitbucketGitSCMBuilder extends GitSCMBuilder<BitbucketGitSCMBuilder
             endpoint = new BitbucketServerEndpoint(null, serverURL, false, null);
         }
 
-        String repositoryUrl = endpoint.getRepositoryUrl(scmSource.getRepoOwner(), scmSource.getRepository());
-        if (endpoint instanceof BitbucketCloudEndpoint) {
-            withBrowser(new BitbucketWeb(repositoryUrl));
+        String repositoryURL = endpoint.getRepositoryUrl(scmSource.getRepoOwner(), scmSource.getRepository());
+        if (BitbucketApiUtils.isCloud(endpoint.getServerUrl())) {
+            withBrowser(new BitbucketWeb(repositoryURL));
         } else {
-            withBrowser(new BitbucketServer(repositoryUrl));
+            withBrowser(new BitbucketServer(repositoryURL));
         }
 
         // Test for protocol

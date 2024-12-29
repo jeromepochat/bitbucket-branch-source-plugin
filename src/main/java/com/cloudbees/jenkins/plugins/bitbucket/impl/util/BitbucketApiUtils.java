@@ -10,6 +10,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketCloudEndpoint;
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketEndpointConfiguration;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Util;
 import hudson.model.Item;
 import hudson.util.FormFillFailure;
@@ -31,6 +32,10 @@ public class BitbucketApiUtils {
 
     public static boolean isCloud(BitbucketApi client) {
         return client instanceof BitbucketCloudApiClient;
+    }
+
+    public static boolean isCloud(@NonNull String serverURL) {
+        return StringUtils.startsWith(serverURL, BitbucketCloudEndpoint.SERVER_URL);
     }
 
     public static ListBoxModel getFromBitbucket(SCMSourceOwner context,
