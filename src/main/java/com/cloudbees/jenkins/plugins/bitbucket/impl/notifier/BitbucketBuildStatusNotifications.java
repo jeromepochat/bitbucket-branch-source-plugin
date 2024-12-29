@@ -34,6 +34,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.PullRequestSCMRevision;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketApi;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketBuildStatus;
 import com.cloudbees.jenkins.plugins.bitbucket.client.BitbucketCloudApiClient;
+import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketApiUtils;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -219,16 +220,12 @@ public final class BitbucketBuildStatusNotifications {
             PullRequestSCMHead head = (PullRequestSCMHead) rev.getHead();
             key = getBuildKey(build, head.getOriginName(), shareBuildKeyBetweenBranchAndPR);
             /*
-             * in case of pull request it's not clear at all how to value refname. The
-             * bitbucket documentation does not help. Using values like
-             * - refs/heads/PR-748;
-             * - refs/pull-requests/748,
-             * - refs/pull-requests/feature/test;
-             * causes the build status disappear from the web page.
-             * The only working value is null. If commit is used for two different
-             * pull requests than you will get status doubled in both PRs
+             * Poor documentation for bitbucket cloud at:
+             * https://community.atlassian.com/t5/Bitbucket-questions/Re-Builds-not-appearing-in-pull-requests/qaq-p/1805991/comment-id/65864#M65864
+             * that means refName null or valued with only head.getBranchName()
+             * For bitbucket server refName set to null or ... (refs/heads/ + head.getBranchName()) ??
              */
-            refName = null; // "refs/pull-requests/" + head.getBranchName();
+            refName = null;
             bitbucket = source.buildBitbucketClient(head);
         } else {
             listener.getLogger().println("[Bitbucket] Notifying commit build result");
