@@ -91,7 +91,7 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git</artifactId>
       <!-- TODO: remove when in bom -->
-      <version>5.6.1-rc5349.5d1753d390a_7</version>
+      <version>5.7.0</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
