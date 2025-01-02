@@ -43,6 +43,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketCloudEndpoint;
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketEndpointConfiguration;
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketServerEndpoint;
 import com.cloudbees.jenkins.plugins.bitbucket.hooks.HasPullRequests;
+import com.cloudbees.jenkins.plugins.bitbucket.impl.extension.BitbucketEnvVarExtension;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketApiUtils;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketApiUtils.BitbucketSupplier;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketCredentials;
@@ -1011,6 +1012,7 @@ public class BitbucketSCMSource extends SCMSource {
         BitbucketAuthenticator authenticator = authenticator();
         return new BitbucketGitSCMBuilder(this, head, revision, credentialsId)
                 .withExtension(new GitClientAuthenticatorExtension(authenticator == null || sshAuth ? null : authenticator.getCredentialsForSCM()))
+                .withExtension(new BitbucketEnvVarExtension(getRepoOwner(), getRepository(), getProjectKey(), getServerUrl()))
                 .withCloneLinks(primaryCloneLinks, mirrorCloneLinks)
                 .withTraits(traits)
                 .build();

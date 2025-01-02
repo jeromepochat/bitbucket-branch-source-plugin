@@ -6,6 +6,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.GitSCMExtension;
 import java.util.Map;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 public class BitbucketEnvVarExtension extends GitSCMExtension {
 
@@ -14,6 +15,7 @@ public class BitbucketEnvVarExtension extends GitSCMExtension {
     private final String projectKey;
     private final String serverURL;
 
+    @DataBoundConstructor
     public BitbucketEnvVarExtension(@Nullable String owner, @NonNull String repository, @Nullable String projectKey, @NonNull String serverURL) {
         this.owner = owner;
         this.repository = repository;
