@@ -44,6 +44,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketEndpointConfig
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketServerEndpoint;
 import com.cloudbees.jenkins.plugins.bitbucket.hooks.HasPullRequests;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.extension.BitbucketEnvVarExtension;
+import com.cloudbees.jenkins.plugins.bitbucket.impl.extension.GitClientAuthenticatorExtension;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketApiUtils;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketApiUtils.BitbucketSupplier;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketCredentials;
@@ -1006,15 +1007,17 @@ public class BitbucketSCMSource extends SCMSource {
     public SCM build(@NonNull SCMHead head, @CheckForNull SCMRevision revision) {
         initCloneLinks();
 
-        boolean sshAuth = traits.stream()
-            .anyMatch(SSHCheckoutTrait.class::isInstance);
-
-        BitbucketAuthenticator authenticator = authenticator();
-        return new BitbucketGitSCMBuilder(this, head, revision, credentialsId)
-                .withExtension(new GitClientAuthenticatorExtension(authenticator == null || sshAuth ? null : authenticator.getCredentialsForSCM()))
+        BitbucketGitSCMBuilder scmBuilder = new BitbucketGitSCMBuilder(this, head, revision, credentialsId)
                 .withExtension(new BitbucketEnvVarExtension(getRepoOwner(), getRepository(), getProjectKey(), getServerUrl()))
                 .withCloneLinks(primaryCloneLinks, mirrorCloneLinks)
-                .withTraits(traits)
+                .withTraits(traits);
+
+        boolean sshAuth = traits.stream()
+                .anyMatch(SSHCheckoutTrait.class::isInstance);
+        BitbucketAuthenticator authenticator = authenticator();
+
+        return scmBuilder
+                .withExtension(new GitClientAuthenticatorExtension(scmBuilder.remote(), authenticator == null || sshAuth ? null : authenticator.getCredentialsForSCM()))
                 .build();
     }
 
