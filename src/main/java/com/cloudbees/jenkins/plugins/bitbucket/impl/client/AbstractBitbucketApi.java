@@ -279,24 +279,17 @@ public abstract class AbstractBitbucketApi implements AutoCloseable {
             // use default
         }
 
-        try (CloseableHttpResponse response =  executeMethod(host, httpget)) {
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_NOT_FOUND) {
-                EntityUtils.consume(response.getEntity());
-                throw new FileNotFoundException("URL: " + path);
-            }
-            if (statusCode != HttpStatus.SC_OK) {
-                String content = getResponseContent(response);
-                throw buildResponseException(response, content);
-            }
-            return new ClosingConnectionInputStream(response, httpget, getConnectionManager());
-        } catch (BitbucketRequestException | FileNotFoundException e) {
-            throw e;
-        } catch (IOException e) {
-            throw new IOException("Communication error for url: " + path, e);
-        } finally {
-            release(httpget);
+        CloseableHttpResponse response =  executeMethod(host, httpget);
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == HttpStatus.SC_NOT_FOUND) {
+            EntityUtils.consume(response.getEntity());
+            throw new FileNotFoundException("URL: " + path);
         }
+        if (statusCode != HttpStatus.SC_OK) {
+            String content = getResponseContent(response);
+            throw buildResponseException(response, content);
+        }
+        return new ClosingConnectionInputStream(response, httpget, getConnectionManager());
     }
 
     protected int headRequestStatus(String path) throws IOException {
