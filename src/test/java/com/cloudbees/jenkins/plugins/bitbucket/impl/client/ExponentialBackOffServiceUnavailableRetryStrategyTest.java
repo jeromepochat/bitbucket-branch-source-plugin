@@ -60,7 +60,7 @@ class ExponentialBackOffServiceUnavailableRetryStrategyTest {
         );
 
         final RetryInterceptor counterInterceptor = new RetryInterceptor();
-        BitbucketApi client = new BitbucketServerAPIClient("http://localhost:" + mockServer.getPort(),
+        try (BitbucketApi client = new BitbucketServerAPIClient("http://localhost:" + mockServer.getPort(),
                 "test",
                 "testRepos",
                 (BitbucketAuthenticator) null,
@@ -73,10 +73,11 @@ class ExponentialBackOffServiceUnavailableRetryStrategyTest {
                         .setServiceUnavailableRetryStrategy(new ExponentialBackOffServiceUnavailableRetryStrategy(2, 5, 100))
                         .addInterceptorFirst(counterInterceptor);
             }
-        };
+        }) {
 
-        assertThatIOException().isThrownBy(() -> client.getTags());
-        assertThat(counterInterceptor.getRetry()).isEqualTo(6); // retry after 5ms, 10ms, 20ms, 40ms, 80ms, 100ms
+            assertThatIOException().isThrownBy(() -> client.getTags());
+            assertThat(counterInterceptor.getRetry()).isEqualTo(6); // retry after 5ms, 10ms, 20ms, 40ms, 80ms, 100ms
+        }
     }
 
     private static class RetryInterceptor implements HttpResponseInterceptor {
