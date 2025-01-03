@@ -35,7 +35,7 @@ public class BitbucketApiUtils {
     }
 
     public static boolean isCloud(@NonNull String serverURL) {
-        return StringUtils.startsWith(serverURL, BitbucketCloudEndpoint.SERVER_URL);
+        return StringUtils.startsWithAny(serverURL, new String[] { BitbucketCloudEndpoint.SERVER_URL, BitbucketCloudEndpoint.BAD_SERVER_URL });
     }
 
     public static ListBoxModel getFromBitbucket(SCMSourceOwner context,

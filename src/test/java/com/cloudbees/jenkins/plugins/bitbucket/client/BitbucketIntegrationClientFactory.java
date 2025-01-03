@@ -25,7 +25,7 @@ package com.cloudbees.jenkins.plugins.bitbucket.client;
 
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketApi;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketAuthenticator;
-import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketCloudEndpoint;
+import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketApiUtils;
 import com.cloudbees.jenkins.plugins.bitbucket.server.client.BitbucketServerAPIClient;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,8 +73,7 @@ public class BitbucketIntegrationClientFactory {
     }
 
     public static BitbucketApi getClient(String payloadRootPath, String serverURL, String owner, String repositoryName) {
-        if (BitbucketCloudEndpoint.SERVER_URL.equals(serverURL) ||
-                BitbucketCloudEndpoint.BAD_SERVER_URL.equals(serverURL)) {
+        if (BitbucketApiUtils.isCloud(serverURL)) {
             return new BitbucketClouldIntegrationClient(payloadRootPath, owner, repositoryName);
         } else {
             return new BitbucketServerIntegrationClient(payloadRootPath, serverURL, owner, repositoryName);
@@ -169,13 +168,4 @@ public class BitbucketIntegrationClientFactory {
         return BitbucketIntegrationClientFactory.getClient(null, serverURL, "amuniz", "test-repos");
     }
 
-    private static CloseableHttpResponse createRateLimitResponse() {
-        StatusLine statusLine = mock(StatusLine.class);
-        when(statusLine.getStatusCode()).thenReturn(429);
-
-        CloseableHttpResponse response = mock(CloseableHttpResponse.class);
-        when(response.getStatusLine()).thenReturn(statusLine);
-
-        return response;
-    }
 }
