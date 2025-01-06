@@ -14,12 +14,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpRequest;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.mockito.ArgumentCaptor;
@@ -50,7 +52,8 @@ class BitbucketServerAPIClientTest {
 
     @Test
     void verify_status_notitication_name_max_length() throws Exception {
-        BitbucketApi client = BitbucketIntegrationClientFactory.getApiMockClient("https://acme.bitbucket.org");
+        String serverURL = "https://acme.bitbucket.org";
+        BitbucketApi client = BitbucketIntegrationClientFactory.getApiMockClient(serverURL);
         BitbucketBuildStatus status = new BitbucketBuildStatus();
         status.setName(RandomStringUtils.randomAlphanumeric(300));
         status.setState(Status.INPROGRESS);
@@ -90,6 +93,8 @@ class BitbucketServerAPIClientTest {
         assertThat(request).isNotNull()
             .isInstanceOfSatisfying(HttpHead.class, head -> {
                     assertThat(head.getURI())
+                        .hasScheme("https")
+                        .hasHost("acme.bitbucket.org")
                         .hasPath("/rest/api/1.0/projects/amuniz/repos/test-repos/browse/folder/Jenkinsfile")
                         .hasQuery("at=feature/pipeline");
             });
@@ -103,7 +108,10 @@ class BitbucketServerAPIClientTest {
         HttpRequestBase request = extractRequest(client);
         assertThat(request).isNotNull()
             .isInstanceOfSatisfying(HttpHead.class, head ->
-                assertThat(head.getURI()).hasPath("/rest/api/1.0/projects/amuniz/repos/test-repos/browse/Jenkinsfile"));
+                assertThat(head.getURI())
+                    .hasScheme("https")
+                    .hasHost("acme.bitbucket.org")
+                    .hasPath("/rest/api/1.0/projects/amuniz/repos/test-repos/browse/Jenkinsfile"));
     }
 
     @Test
@@ -135,11 +143,45 @@ class BitbucketServerAPIClientTest {
 
     @Test
     void verify_mirroredRepository_does_not_authenticate_request() throws Exception {
-        BitbucketServerAPIClient client = (BitbucketServerAPIClient) BitbucketIntegrationClientFactory.getClient("localhost", "amuniz", "test-repos");
+        String serverURL = "https://acme.bitbucket.org";
+        BitbucketServerAPIClient client = (BitbucketServerAPIClient) BitbucketIntegrationClientFactory.getClient(serverURL, "amuniz", "test-repos");
 
         BitbucketAuthenticator authenticator = extractAuthenticator(client);
-        String url = "https://localhost/rest/mirroring/latest/upstreamServers/1/repos/1?jwt=TOKEN";
+        String url = serverURL + "/rest/mirroring/latest/upstreamServers/1/repos/1?jwt=TOKEN";
         client.getMirroredRepository(url);
         verify(authenticator, never()).configureRequest(any(HttpRequest.class));
     }
+
+    @Issue("JENKINS-64418")
+    @Test
+    void verify_getBranch_request_URL() throws Exception {
+        String serverURL = "https://acme.bitbucket.org";
+        BitbucketServerAPIClient client = (BitbucketServerAPIClient) BitbucketIntegrationClientFactory.getClient(serverURL, "amuniz", "test-repos");
+
+        client.getBranch("feature/BB-1");
+        HttpRequestBase request = extractRequest(client);
+        assertThat(request).isNotNull()
+            .isInstanceOfSatisfying(HttpGet.class, head ->
+                assertThat(head.getURI())
+                    .hasScheme("https")
+                    .hasHost("acme.bitbucket.org")
+                    .hasPath("/rest/api/1.0/projects/amuniz/repos/test-repos/branches"));
+    }
+
+    @Issue("JENKINS-64418")
+    @Test
+    void verify_getTag_request_URL() throws Exception {
+        String serverURL = "https://acme.bitbucket.org";
+        BitbucketServerAPIClient client = (BitbucketServerAPIClient) BitbucketIntegrationClientFactory.getClient(serverURL, "amuniz", "test-repos");
+
+        client.getTag("v0.0.0");
+        HttpRequestBase request = extractRequest(client);
+        assertThat(request).isNotNull()
+            .isInstanceOfSatisfying(HttpGet.class, head ->
+                assertThat(head.getURI())
+                    .hasScheme("https")
+                    .hasHost("acme.bitbucket.org")
+                    .hasPath("/rest/api/1.0/projects/amuniz/repos/test-repos/tags"));
+    }
+
 }
