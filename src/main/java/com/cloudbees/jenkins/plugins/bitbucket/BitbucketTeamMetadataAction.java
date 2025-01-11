@@ -108,12 +108,12 @@ public class BitbucketTeamMetadataAction extends AvatarMetadataAction {
         }
 
         private StandardCredentials findCredentials() {
-            try (ACLContext ctx = ACL.as(ACL.SYSTEM)) {
+            try (ACLContext ctx = ACL.as2(ACL.SYSTEM2)) {
                 return CredentialsMatchers.firstOrNull(
-                        CredentialsProvider.lookupCredentials(
+                        CredentialsProvider.lookupCredentialsInItem(
                                 credentials.getClass(),
                                 (Item) null, // context
-                                ACL.SYSTEM,
+                                ACL.SYSTEM2,
                                 URIRequirementBuilder.fromUri(serverUrl).build()
                         ),
                         CredentialsMatchers.allOf(
