@@ -118,6 +118,7 @@ class BitbucketServerAPIClientTest {
             assertThatJson(json).node("key")
                 .isString()
                 .hasSize(255)
+                .startsWith(longKey.substring(0, 255 - 33))
                 .endsWith('/' + DigestUtils.md5Hex(longKey));
         }
     }
