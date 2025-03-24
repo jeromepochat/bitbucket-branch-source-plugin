@@ -86,9 +86,9 @@ public final class BitbucketBuildStatusNotifications {
      * Throws an IllegalStateException if it is not valid, or return the url otherwise
      *
      * @param url the URL of the build to check
-     * @param bitbucket the bitbucket client we are facing.
+     * @param client the bitbucket client we are facing.
      */
-    static String checkURL(@NonNull String url, BitbucketApi bitbucket) {
+    static String checkURL(@NonNull String url, BitbucketApi client) {
         try {
             URL anURL = new URL(url);
             if ("localhost".equals(anURL.getHost())) {
@@ -97,7 +97,7 @@ public final class BitbucketBuildStatusNotifications {
             if ("unconfigured-jenkins-location".equals(anURL.getHost())) {
                 throw new IllegalStateException("Could not determine Jenkins URL.");
             }
-            if (bitbucket instanceof BitbucketCloudApiClient && !anURL.getHost().contains(".")) {
+            if (BitbucketApiUtils.isCloud(client) && !anURL.getHost().contains(".")) {
                 throw new IllegalStateException(
                     "Please use a fully qualified name or an IP address for Jenkins URL, this is required by Bitbucket cloud");
             }

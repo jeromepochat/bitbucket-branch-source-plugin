@@ -224,6 +224,7 @@ public class BitbucketGitSCMBuilder extends GitSCMBuilder<BitbucketGitSCMBuilder
             && revision instanceof PullRequestSCMRevision;
         String targetBranch = head.getTarget().getName();
         String branchName = head.getBranchName();
+        boolean scmCloud = BitbucketApiUtils.isCloud(scmSource.getServerUrl());
         if (prFromTargetRepository) {
             withRefSpec("+refs/heads/" + branchName + ":refs/remotes/@{remote}/" + branchName);
             if (cloneFromMirror) {
@@ -247,7 +248,7 @@ public class BitbucketGitSCMBuilder extends GitSCMBuilder<BitbucketGitSCMBuilder
                 withPrimaryRemote();
             }
         } else {
-            if (scmSource.isCloud()) {
+            if (scmCloud) {
                 withRefSpec("+refs/heads/" + branchName + ":refs/remotes/@{remote}/" + headName);
                 String cloneLink = getCloudRepositoryUri(pullRequestRepoOwner, pullRequestRepository);
                 withRemote(cloneLink);
@@ -260,7 +261,7 @@ public class BitbucketGitSCMBuilder extends GitSCMBuilder<BitbucketGitSCMBuilder
         if (head.getCheckoutStrategy() == ChangeRequestCheckoutStrategy.MERGE) {
             String hash = revision instanceof PullRequestSCMRevision prRevision ? prRevision.getTargetImpl().getHash() : null;
             String refSpec = "+refs/heads/" + targetBranch + ":refs/remotes/@{remote}/" + targetBranch;
-            if (!prFromTargetRepository && scmSource.isCloud()) {
+            if (!prFromTargetRepository && scmCloud) {
                 String upstreamRemoteName = remoteName().equals("upstream") ? "upstream-upstream" : "upstream";
                 withAdditionalRemote(upstreamRemoteName, getCloneLink(primaryCloneLinks), refSpec);
                 withExtension(new MergeWithGitSCMExtension("remotes/" + upstreamRemoteName + "/" + targetBranch, hash));

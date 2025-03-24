@@ -345,7 +345,7 @@ public class BitbucketSCMNavigator extends SCMNavigator {
     }
 
     private boolean showAvatar() {
-        return traits.stream().anyMatch(ShowBitbucketAvatarTrait.class::isInstance);
+        return SCMTrait.find(traits, ShowBitbucketAvatarTrait.class) != null;
     }
 
     @Symbol("bitbucket")
