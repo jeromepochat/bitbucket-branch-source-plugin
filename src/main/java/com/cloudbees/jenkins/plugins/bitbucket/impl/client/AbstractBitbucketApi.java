@@ -134,7 +134,7 @@ public abstract class AbstractBitbucketApi implements AutoCloseable {
         return len;
     }
 
-    protected static HttpClientConnectionManager buildConnectionManager() {
+    protected static PoolingHttpClientConnectionManagerBuilder connectionManagerBuilder() {
         int connectTimeout = Integer.getInteger("http.connect.timeout", 10);
         int socketTimeout = Integer.getInteger("http.socket.timeout", 60);
         ConnectionConfig connectionConfig = ConnectionConfig.custom()
@@ -142,12 +142,8 @@ public abstract class AbstractBitbucketApi implements AutoCloseable {
                 .setSocketTimeout(socketTimeout, TimeUnit.SECONDS)
                 .build();
 
-        HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
-                        .setMaxConnPerRoute(20)
-                        .setMaxConnTotal(22)
-                        .setDefaultConnectionConfig(connectionConfig)
-                        .build();
-        return connectionManager;
+        return PoolingHttpClientConnectionManagerBuilder.create()
+                .setDefaultConnectionConfig(connectionConfig);
     }
 
     protected HttpClientBuilder setupClientBuilder() {

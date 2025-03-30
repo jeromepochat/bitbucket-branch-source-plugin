@@ -94,7 +94,11 @@ public class BitbucketCloudApiClient extends AbstractBitbucketApi implements Bit
     private static final int MAX_AVATAR_LENGTH = 16384;
     private static final int MAX_PAGE_LENGTH = 100;
 
-    private static final HttpClientConnectionManager connectionManager = buildConnectionManager();
+    private static final HttpClientConnectionManager connectionManager = connectionManagerBuilder()
+            .setMaxConnPerRoute(20)
+            // for bitbucket cloud there is only one server (route)
+            .setMaxConnTotal(20)
+            .build();
 
     private final CloseableHttpClient client;
     private final String owner;

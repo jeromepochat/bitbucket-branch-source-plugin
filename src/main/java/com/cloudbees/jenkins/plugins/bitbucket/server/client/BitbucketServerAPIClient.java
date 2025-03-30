@@ -138,7 +138,10 @@ public class BitbucketServerAPIClient extends AbstractBitbucketApi implements Bi
     private static final String API_MIRRORS_PATH = "/rest/mirroring/1.0/mirrorServers";
     private static final Integer DEFAULT_PAGE_LIMIT = 200;
 
-    private static final HttpClientConnectionManager connectionManager = buildConnectionManager();
+    private static final HttpClientConnectionManager connectionManager = connectionManagerBuilder()
+            .setMaxConnPerRoute(20)
+            .setMaxConnTotal(40 /* should be 20 * number of server instances */)
+            .build();
 
     /**
      * Repository owner.
