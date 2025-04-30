@@ -36,6 +36,8 @@ import hudson.plugins.git.GitException;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.plugins.git.extensions.GitSCMExtensionDescriptor;
+import hudson.security.ACL;
+import hudson.security.ACLContext;
 import java.util.Objects;
 import jenkins.authentication.tokens.api.AuthenticationTokens;
 import jenkins.model.Jenkins;
@@ -95,7 +97,12 @@ public class GitClientAuthenticatorExtension extends GitSCMExtension {
         }
         StandardCredentials credentials;
         if (scmOwner != null) {
-            Item owner = Jenkins.get().getItemByFullName(scmOwner, Item.class);
+            Item owner = null;
+            // to access item when security (not matrix) is enabled or
+            // logged user does not have READ(DISCOVER) access on the item
+            try (ACLContext as = ACL.as2(ACL.SYSTEM2)) {
+                owner = Jenkins.get().getItemByFullName(scmOwner, Item.class);
+            }
             if (owner == null) {
                 throw new IllegalStateException("Item " + scmOwner + " seems to be relocated, perform a 'Scan project Now' action to refresh old data");
             }
