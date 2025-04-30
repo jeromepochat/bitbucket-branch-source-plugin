@@ -121,8 +121,10 @@ public class BitbucketApiUtils {
         while (cause != null) {
             if (e instanceof BitbucketRequestException bbException) {
                 return bbException;
-            } else {
+            } else if (cause != e.getCause()) { // avoid stackoverflow when cause is also the exception
                 cause = e.getCause();
+            } else {
+                break;
             }
         }
         return null;

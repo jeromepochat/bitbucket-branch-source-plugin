@@ -154,6 +154,11 @@ public class ExponentialBackoffRetryStrategy extends DefaultHttpRequestRetryStra
         return handleAsIdempotent(request);
     }
 
+    @Override
+    public TimeValue getRetryInterval(HttpRequest request, IOException exception, int execCount, HttpContext context) {
+        return TimeValue.ofMilliseconds(getRetryInterval(execCount));
+    }
+
     /**
      * {@inheritDoc}
      */
