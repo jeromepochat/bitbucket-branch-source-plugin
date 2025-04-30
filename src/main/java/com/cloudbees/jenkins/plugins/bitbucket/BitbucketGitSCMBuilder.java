@@ -329,7 +329,7 @@ public class BitbucketGitSCMBuilder extends GitSCMBuilder<BitbucketGitSCMBuilder
         return cloneLinks.stream()
             .filter(link -> protocol.matches(link.getName()))
             .findAny()
-            .orElseThrow(() -> new IllegalStateException("Can't find clone link for protocol " + protocol))
+            .orElseThrow(() -> new IllegalStateException("Can't find clone link for protocol " + protocol + ". Did you disabled the protocol on Bitbucket Data Center configuration?"))
             .getHref();
     }
 
