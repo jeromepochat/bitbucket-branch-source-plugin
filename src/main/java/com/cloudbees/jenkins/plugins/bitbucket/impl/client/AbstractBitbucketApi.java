@@ -90,7 +90,7 @@ public abstract class AbstractBitbucketApi implements AutoCloseable {
 
     protected BitbucketRequestException buildResponseException(ClassicHttpResponse response, String errorMessage) {
         String headers = StringUtils.join(response.getHeaders(), "\n");
-        String message = String.format("HTTP request error.%nStatus: %s%nResponse: %s%n%s", response.getReasonPhrase(), errorMessage, headers);
+        String message = String.format("HTTP request error.%nStatus: %s HTTP %s%nResponse: %s%n%s", response.getReasonPhrase(), response.getCode(), errorMessage, headers);
         return new BitbucketRequestException(response.getCode(), message);
     }
 
