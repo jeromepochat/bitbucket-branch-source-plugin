@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>cloudbees-bitbucket-branch-source</artifactId>
-    <version>936.3.1</version>
+    <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
 
     <name>Bitbucket Branch Source Plugin</name>
@@ -26,7 +26,7 @@
     </licenses>
 
     <properties>
-        <revision>936.3.1</revision>
+        <revision>936.3.2</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/bitbucket-branch-source-plugin</gitHubRepo>
         <jenkins.baseline>2.479</jenkins.baseline>
