@@ -5,8 +5,8 @@
 .project
 .classpath
 .settings
-target
-work
+target/
+work/
 .checkstyle
 .externalToolBuilders/
 

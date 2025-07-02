@@ -31,7 +31,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.client.BitbucketIntegrationClient
 import com.cloudbees.jenkins.plugins.bitbucket.endpoints.BitbucketEndpointConfiguration;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.endpoint.BitbucketServerEndpoint;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.JsonParser;
-import com.cloudbees.jenkins.plugins.bitbucket.server.client.repository.NativeBitbucketServerWebhook;
+import com.cloudbees.jenkins.plugins.bitbucket.server.client.repository.BitbucketServerWebhook;
 import com.cloudbees.jenkins.plugins.bitbucket.test.util.BitbucketTestUtil;
 import hudson.model.TaskListener;
 import java.io.IOException;
@@ -97,7 +97,7 @@ class WebhookAutoRegisterListenerTest {
             .isInstanceOf(HttpPut.class)
             .asInstanceOf(InstanceOfAssertFactories.type(HttpPut.class))
             .satisfies(put -> {
-                NativeBitbucketServerWebhook message = JsonParser.toJava(put.getEntity().getContent(), NativeBitbucketServerWebhook.class);
+                BitbucketServerWebhook message = JsonParser.toJava(put.getEntity().getContent(), BitbucketServerWebhook.class);
                 assertThat(message.getSecret()).isEqualTo("password");
             });
     }
