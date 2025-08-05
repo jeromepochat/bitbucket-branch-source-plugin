@@ -8,22 +8,7 @@
 
 ## User Guide
 
-[Browse the user guide here](docs/USER_GUIDE.adoc)
-
-## Issue tracking (where file new issues?)
-
-At the time of writing, the Jenkins organisation let to the maintainer the choice of which issue tracker to use. Available are Github or [JIRA](https://issues.jenkins.io) issue tracker.
-For reason discussed in the Jenkins Developers Google Group the official issue tracking for this plugin is [JIRA](https://issues.jenkins.io/browse/JENKINS-74965?jql=project%20%3D%20JENKINS%20AND%20component%20%3D%20bitbucket-branch-source-plugin%20ORDER%20BY%20created%20DESC).
-
-What means:
-* new issues must be open at JIRA
-* the Github tracker will be froozen, that means no new issues will be accepted
-* depending on the progress I expect that by the date 01/06/2025 the Github issue tracker will be disabled at all
-
-What will happen to the issues opened in Github?
-* actual issues will be processed
-* maybe resolved
-* otherwise after 6 months, it will be manually migrated by me to JIRA if it doesn't already exist
+To configure this plugin correctly, read the [user guide here](docs/USER_GUIDE.adoc)
 
 ## Notes
 
