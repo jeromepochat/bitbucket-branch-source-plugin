@@ -1,7 +1,5 @@
 = Bitbucket Branch Source Plugin
 
-=====================================================================
-
 [id=bitbucket-sect-intro]
 
 _Bitbucket Branch Source plugin_ allows use of Bitbucket Cloud and Data Center as a multi-branch project source in two different ways:
@@ -9,7 +7,7 @@ _Bitbucket Branch Source plugin_ allows use of Bitbucket Cloud and Data Center a
  * *Single repository source*: automatic creation of jobs for branches and pull requests in a specific repository.
  * *Organization folders*: automatic creation of multi-branch projects for each visible repository in a specific Bitbucket Team or Project.
 
-IMPORTANT: Since version 937.0.0 this plugin officially supports *only* versions of Bitbucket Data Center *not* declared as in link:https://confluence.atlassian.com/support/atlassian-end-of-support-policy-201851003.html[End Of Support (EOS)].
+IMPORTANT: Since version 937.0.0 this plugin officially supports *only* versions of Bitbucket Data Center *not* excluded by the link:https://confluence.atlassian.com/support/atlassian-end-of-support-policy-201851003.html[End Of Support (EOS)] policy.
 
 [id=bitbucket-scm-source]
 == Branches and pull requests auto-discovering
