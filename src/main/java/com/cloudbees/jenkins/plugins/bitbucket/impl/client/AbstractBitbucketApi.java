@@ -442,9 +442,9 @@ public abstract class AbstractBitbucketApi implements BitbucketApi, AutoCloseabl
 
                 private String completeURL(@NonNull String path) {
                     if (path.startsWith("/")) {
-                        return delegate.getBaseURL() + "/" + path;
-                    } else {
                         return delegate.getBaseURL() + path;
+                    } else {
+                        return delegate.getBaseURL() + "/" + path;
                     }
                 }
 
