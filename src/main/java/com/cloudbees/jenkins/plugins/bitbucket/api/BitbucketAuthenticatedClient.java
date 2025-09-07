@@ -23,6 +23,7 @@
  */
 package com.cloudbees.jenkins.plugins.bitbucket.api;
 
+import com.cloudbees.jenkins.plugins.bitbucket.impl.util.JsonParser;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.IOException;
@@ -60,7 +61,11 @@ public interface BitbucketAuthenticatedClient extends AutoCloseable {
      * @return the JSON string of the response
      * @throws IOException in case of connection failures
      */
-    String post(@NonNull String path, @CheckForNull String payload) throws IOException;
+    String post(@NonNull String path, @NonNull String payload) throws IOException;
+
+    default String post(@NonNull String path, @NonNull Object payload) throws IOException {
+        return post(path, JsonParser.toString(payload));
+    }
 
     /**
      * Perform an HTTP PUT to the configured endpoint.
@@ -72,7 +77,11 @@ public interface BitbucketAuthenticatedClient extends AutoCloseable {
      * @return the JSON string of the response
      * @throws IOException in case of connection failures
      */
-    String put(@NonNull String path, @CheckForNull String payload) throws IOException;
+    String put(@NonNull String path, @NonNull String payload) throws IOException;
+
+    default String put(@NonNull String path, @NonNull Object payload) throws IOException {
+        return put(path, JsonParser.toString(payload));
+    }
 
     /**
      * Perform an HTTP DELETE to the configured endpoint.
