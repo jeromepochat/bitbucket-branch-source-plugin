@@ -123,7 +123,7 @@ public class BitbucketSCMSourcePushHookReceiver extends CrumbExclusion implement
     }
 
     private BitbucketWebhookProcessor getHookProcessor(Map<String, String> reqHeaders,
-                                                       MultiValuedMap<String, String> reqParameters) {
+                                                    MultiValuedMap<String, String> reqParameters) {
         BitbucketWebhookProcessor hookProcessor;
 
         List<BitbucketWebhookProcessor> matchingProcessors = getHookProcessors()
@@ -149,7 +149,7 @@ public class BitbucketSCMSourcePushHookReceiver extends CrumbExclusion implement
         ExtensionList<BitbucketWebhookProcessor> processors = ExtensionList.lookup(BitbucketWebhookProcessor.class);
         if (processors.isEmpty()) {
             logger.warning(() -> "No registered processors found in the system.");
-            throw new BitbucketWebhookProcessorException(HttpServletResponse.SC_BAD_REQUEST, "No registered processors found in Jenkins. Refer to the user documentation on how configure the webHook in Bitbucket at https://github.com/jenkinsci/bitbucket-branch-source-plugin/blob/master/docs/USER_GUIDE.adoc#webhooks-registering");
+            throw new BitbucketWebhookProcessorException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No registered processors found in Jenkins. Refer to the user documentation on how configure the webHook in Bitbucket at https://github.com/jenkinsci/bitbucket-branch-source-plugin/blob/master/docs/USER_GUIDE.adoc#webhooks-registering");
         }
         return processors.stream();
     }
