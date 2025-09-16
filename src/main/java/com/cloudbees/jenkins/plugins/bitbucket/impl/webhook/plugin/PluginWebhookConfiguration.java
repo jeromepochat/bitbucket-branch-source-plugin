@@ -29,7 +29,6 @@ import com.cloudbees.jenkins.plugins.bitbucket.api.webhook.BitbucketWebhookDescr
 import com.cloudbees.jenkins.plugins.bitbucket.api.webhook.BitbucketWebhookManager;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.util.BitbucketCredentialsUtils;
 import com.cloudbees.jenkins.plugins.bitbucket.impl.webhook.Messages;
-import com.cloudbees.jenkins.plugins.bitbucket.impl.webhook.server.ServerWebhookConfiguration;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -56,7 +55,7 @@ import static hudson.Util.fixEmptyAndTrim;
 // https://help.moveworkforward.com/BPW/atlassian-bitbucket-post-webhook-api
 // https://help.moveworkforward.com/BPW/how-to-get-configurations-using-post-webhooks-for-
 public class PluginWebhookConfiguration implements BitbucketWebhookConfiguration {
-    private static final Logger logger = Logger.getLogger(ServerWebhookConfiguration.class.getName());
+    private static final Logger logger = Logger.getLogger(PluginWebhookConfiguration.class.getName());
     private static final String WEBHOOK_API = "/rest/webhook/1.0/projects/{owner}/repos/{repo}/configurations";
 
     /**
@@ -122,7 +121,7 @@ public class PluginWebhookConfiguration implements BitbucketWebhookConfiguration
 
     @Override
     public String getDisplayName() {
-        return Messages.ServerWebhookImplementation_displayName();
+        return Messages.PluginWebhookImplementation_displayName();
     }
 
     @NonNull

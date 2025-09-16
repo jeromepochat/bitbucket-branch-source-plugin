@@ -37,6 +37,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @since 2.4.5
  */
+@Deprecated
 public class WebhookConfigurationTrait extends SCMSourceTrait {
 
     /**
