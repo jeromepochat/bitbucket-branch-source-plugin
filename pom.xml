@@ -24,7 +24,7 @@
     </licenses>
 
     <properties>
-        <revision>937.0.5</revision>
+        <revision>937.1.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/bitbucket-branch-source-plugin</gitHubRepo>
         <jenkins.baseline>2.504</jenkins.baseline>
